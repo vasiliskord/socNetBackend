@@ -7,9 +7,18 @@ const Post =require('../models/postModel')
 // access Public
 
 const getPosts = asyncHandler(async(req,res)=>{
-    const posts= await Post.find({user:req.user.id})
+    const posts= await Post.find()
     res.json(posts)
 })
+
+//GET POSTS BY ID
+// route /api/posts/:id
+// access Public
+const getPostById = asyncHandler(async(req,res)=>{
+    const post= await Post.findById(req.params.id)
+    res.json(post)
+}
+)
 
 //Post POSTS
 // route /api/posts
@@ -80,4 +89,4 @@ const deletePost = asyncHandler(async(req,res)=>{
 })
 
 
-module.exports = {getPosts,createPost,editPost,deletePost}
+module.exports = {getPosts,createPost,editPost,deletePost,getPostById}
