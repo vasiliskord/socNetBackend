@@ -14,6 +14,10 @@ const postSchema = mongoose.Schema({
     content:{
         type:String,
         required:[true,"Please add a description"]
+    },
+    comment:{
+        type:[String],
+        default:[]
     }
 },{timestamps:true})
 

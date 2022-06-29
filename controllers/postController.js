@@ -89,4 +89,22 @@ const deletePost = asyncHandler(async(req,res)=>{
 })
 
 
-module.exports = {getPosts,createPost,editPost,deletePost,getPostById}
+//create comment
+// route /api/posts/:id/comment
+// access Public
+const createComment = asyncHandler(async(req,res)=>{
+    const {id}=req.params
+    const {value}=req.body
+    const post = await Post.findById(req.params.id)
+    if(!post){
+        res.status(401)
+        throw new Error("Post not found")
+    }
+    post.comment.push(value)
+    const updatedPost = await Post.findByIdAndUpdate(id,post,{new:true})
+    res.json(updatedPost)
+}
+)
+
+
+module.exports = {getPosts,createPost,editPost,deletePost,getPostById,createComment}
