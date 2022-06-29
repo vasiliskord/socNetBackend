@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const Post =require('../models/postModel')
+const Comment =require('../models/commentModel')
 
 //GET POSTS
 // route /api/posts
@@ -93,18 +94,44 @@ const deletePost = asyncHandler(async(req,res)=>{
 // route /api/posts/:id/comment
 // access Public
 const createComment = asyncHandler(async(req,res)=>{
-    const {id}=req.params
+    // const {id}=req.params
     const {value}=req.body
+
     const post = await Post.findById(req.params.id)
     if(!post){
         res.status(401)
         throw new Error("Post not found")
     }
-    post.comment.push(value)
-    const updatedPost = await Post.findByIdAndUpdate(id,post,{new:true})
-    res.json(updatedPost)
+    const comment = await Comment.create({value:req.body.value,user:req.user,post:req.params.id})
+
+    res.json(comment)
+
+    // post.comment.push(value)
+    // const updatedPost = await Post.findByIdAndUpdate(id,post,{new:true})
+    // res.json(updatedPost)
+}
+)
+
+//create reply comment
+// route /api/posts/:id/comment/:commentId/reply
+// access Public
+const createReplyComment = asyncHandler(async(req,res)=>{
+    const {id}=req.params
+    const {value}=req.body
+    const post = await Post.findById(id)
+    if(!post){
+        res.status(401)
+        throw new Error("Post not found")
+    }
+    const comment = await Comment.findById(req.params.commentId)
+    if(!comment){
+        res.status(401)
+        throw new Error("Comment not found")
+    }
+    const reply = await Comment.create({value:req.body.value,user:req.user,post:req.params.id,parent:req.params.commentId})
+    res.json(reply)
 }
 )
 
 
-module.exports = {getPosts,createPost,editPost,deletePost,getPostById,createComment}
+module.exports = {getPosts,createPost,editPost,deletePost,getPostById,createComment,createReplyComment}

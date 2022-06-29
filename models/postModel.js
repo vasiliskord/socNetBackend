@@ -16,8 +16,8 @@ const postSchema = mongoose.Schema({
         required:[true,"Please add a description"]
     },
     comment:{
-        type:[String],
-        default:[]
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Comment"
     }
 },{timestamps:true})
 
