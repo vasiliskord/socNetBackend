@@ -15,8 +15,12 @@ const commentSchema = mongoose.Schema({
     },
     value:{
         type:String,
-        required:[true,"Please add a comment"]
+        // required:[true,"Please add a comment"]
     },
+    replies:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Comment"
+    }
 },{timestamps:true})
 
 module.exports = mongoose.model('Comment',commentSchema)
