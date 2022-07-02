@@ -13,7 +13,15 @@ const userSchema = mongoose.Schema({
   password:{
     type:String,
     required:[true,"Please add a password"]
-  }
+  },
+  following:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User"
+  }],
+  followers:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User"
+  }],
 },{timestamps:true});
 
 module.exports = mongoose.model("User",userSchema)

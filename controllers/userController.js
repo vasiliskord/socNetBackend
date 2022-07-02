@@ -26,14 +26,12 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res
-      .status(201)
-      .json({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        token: generateToken(user._id),
-      });
+    res.status(201).json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -44,7 +42,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
-  if (user && await bcrypt.compare(password, user.password)) {
+  if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       _id: user.id,
       name: user.name,
@@ -62,8 +60,21 @@ const getMe = asyncHandler(async (req, res) => {
   res.json({ id: _id, name, email });
 });
 
+const followUser = asyncHandler(async (req, res) => {
+  const { userId } = req.body;
+  const user = await User.findById(req.user);
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+  user.following.push(userId);
+  await user.save();
+  res.json(user);
+})
+
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1y" });
 };
 
-module.exports = { registerUser, loginUser, getMe };
+module.exports = { registerUser, loginUser, getMe, followUser };
