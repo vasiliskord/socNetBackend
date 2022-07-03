@@ -55,6 +55,16 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+//get user by id
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(400);
+    throw new Error("User not found");
+  }
+  res.json(user);
+});
+
 const getMe = asyncHandler(async (req, res) => {
   const { _id, email, name } = req.body;
   res.json({ id: _id, name, email });
@@ -69,12 +79,13 @@ const followUser = asyncHandler(async (req, res) => {
   }
   user.following.push(userId);
   await user.save();
-  res.json(user);
-})
-
+  //count is the number of times the user is followed
+  const follower_count = user.following.length;
+  res.json({ follower_count, user });
+});
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1y" });
 };
 
-module.exports = { registerUser, loginUser, getMe, followUser };
+module.exports = { registerUser, loginUser, getMe, followUser, getUserById };
